@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Token della direzione visiva "Campo".
+   I quattro colori di stato (gold, ok, amber, danger) portano
+   significato: non vanno usati come decorazione.
+   ============================================================ */
+@theme {
+  --color-pitch: #0b3d2e;
+  --color-pitch-mid: #134c36;
+  --color-pitch-deep: #08281e;
+  --color-panel: rgba(0, 0, 0, 0.22);
+  --color-panel-input: rgba(0, 0, 0, 0.3);
+  --color-panel-input-strong: rgba(0, 0, 0, 0.45);
+  --color-line: #1d5843;
+  --color-line-soft: rgba(244, 240, 230, 0.09);
+  --color-chalk: #f4f0e6;
+  --color-dim: #9fb3a9;
+  --color-gold: #d4af37;
+  --color-ok: #4e9c6e;
+  --color-amber: #d8963c;
+  --color-danger: #c24b3f;
+  --color-ink: #0a1f17;
+
+  --color-ruolo-p: #e0a94a;
+  --color-ruolo-d: #5b8cc7;
+  --color-ruolo-c: #6fbf7a;
+  --color-ruolo-a: #d46a6a;
+
+  --color-fascia-top: #d4af37;
+  --color-fascia-semi: #aeb4bc;
+  --color-fascia-terza: #8fb4a6;
+  --color-fascia-scommessa: #b5651d;
+
+  --font-ui: "Archivo", system-ui, sans-serif;
+  --font-cond: "Barlow Condensed", "Archivo", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--color-pitch);
+    color: var(--color-chalk);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Tutti i numeri sono tabulari: le cifre non devono ballare mentre cambiano */
+  .n {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* L'app si usa da tastiera: il focus deve essere sempre visibile */
+  :focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--color-gold);
+    border-radius: 4px;
+  }
+
+  input,
+  select,
+  button,
+  textarea {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+  /* le caselle di spunta seguono l'accento della direzione visiva */
+  input[type="checkbox"] {
+    accent-color: var(--color-gold);
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+  }
+
+  select option {
+    background: var(--color-pitch);
+    color: var(--color-chalk);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.25);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-line);
+    border-radius: 5px;
+  }
+}
+
+@layer utilities {
+  /* Etichetta di pannello: 10-11px, 800, uppercase, tracking largo */
+  .titolo-pannello {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-dim);
+  }
+
+  /* Unica animazione ammessa: la riga promossa automaticamente a obiettivo */
+  @keyframes lampeggio-rimpiazzo {
+    0%,
+    100% {
+      background-color: transparent;
+    }
+    25%,
+    75% {
+      background-color: rgba(212, 175, 55, 0.28);
+    }
+  }
+
+  .lampeggia {
+    animation: lampeggio-rimpiazzo 2s ease-in-out 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lampeggia {
+      animation: none;
+      background-color: rgba(212, 175, 55, 0.16);
+    }
+  }
+}
