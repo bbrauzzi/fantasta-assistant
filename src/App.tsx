@@ -20,6 +20,7 @@ import { useUI } from './store/ui';
 export default function App() {
   useScorciatoie();
 
+  const tema = useUI((s) => s.tema);
   const vista = useUI((s) => s.vista);
   const setVista = useUI((s) => s.setVista);
   const astaRapida = useUI((s) => s.astaRapida);
@@ -32,6 +33,11 @@ export default function App() {
   useEffect(() => {
     document.title = astaRapida ? 'Asta rapida — FantAsta' : 'FantAsta Assistant';
   }, [astaRapida]);
+
+  // il tema e' una preferenza di UI: si applica sul root, non nell'undo/redo
+  useEffect(() => {
+    document.documentElement.dataset.tema = tema;
+  }, [tema]);
 
   return (
     <>

@@ -122,7 +122,7 @@ function Campo({ formazione: f }: { formazione: FormazioneModulo }) {
     <div className="flex min-h-0 min-w-0 flex-col gap-[10px]">
       <div
         className="flex min-h-0 flex-1 flex-col justify-around gap-[10px] overflow-hidden rounded-[10px] border border-line px-[14px] py-[14px]"
-        style={{ background: 'linear-gradient(180deg,#0E4634,#0A3628)' }}
+        style={{ background: 'linear-gradient(180deg,var(--color-pitch-mid),var(--color-pitch))' }}
       >
         {ORDINE_CAMPO.map((r) => {
           const caselle = f.undici[r];
@@ -158,7 +158,7 @@ function Campo({ formazione: f }: { formazione: FormazioneModulo }) {
                 <div
                   key={`vuoto-${r}-${i}`}
                   className="grid place-items-center rounded-[8px] text-[11px] text-dim"
-                  style={{ width: 132, height: 62, border: '1px dashed #1D5843' }}
+                  style={{ width: 132, height: 62, border: '1px dashed var(--color-line)' }}
                 >
                   {r} mancante
                 </div>

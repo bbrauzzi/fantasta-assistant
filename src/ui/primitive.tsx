@@ -22,7 +22,7 @@ export function Pannello({
 }) {
   return (
     <section
-      className={`rounded-[11px] border border-line bg-panel p-[13px] ${className}`}
+      className={`rounded-[var(--raggio-pannello)] border border-line bg-panel p-[13px] ${className}`}
       style={style}
     >
       {(titolo || azione) && (
@@ -159,7 +159,7 @@ export function Pulsante({
   return (
     <button
       type="button"
-      className={`rounded-[8px] px-[14px] py-[8px] text-[12px] font-bold disabled:opacity-40 ${STILI[variante]} ${className}`}
+      className={`rounded-[var(--raggio-controllo)] px-[14px] py-[8px] text-[12px] font-bold disabled:opacity-40 ${STILI[variante]} ${className}`}
       {...props}
     />
   );
@@ -174,7 +174,7 @@ export function MiniPulsante({
   return (
     <button
       type="button"
-      className={`rounded-[5px] px-[8px] py-[5px] text-[10px] font-extrabold ${STILI[variante]} ${className}`}
+      className={`rounded-[var(--raggio-mini)] px-[8px] py-[5px] text-[10px] font-extrabold ${STILI[variante]} ${className}`}
       {...props}
     />
   );
@@ -185,7 +185,7 @@ export function MiniPulsante({
 export function Campo({ className = '', ...props }: ComponentProps<'input'>) {
   return (
     <input
-      className={`rounded-[8px] border border-line bg-panel-input px-[12px] py-[8px] text-[13px] placeholder:text-dim ${className}`}
+      className={`rounded-[var(--raggio-controllo)] border border-line bg-panel-input px-[12px] py-[8px] text-[13px] placeholder:text-dim ${className}`}
       {...props}
     />
   );
@@ -198,7 +198,7 @@ export function Selezione({
 }: ComponentProps<'select'>) {
   return (
     <select
-      className={`rounded-[8px] border border-line bg-panel-input px-[10px] py-[8px] text-[12px] ${className}`}
+      className={`rounded-[var(--raggio-controllo)] border border-line bg-panel-input px-[10px] py-[8px] text-[12px] ${className}`}
       {...props}
     >
       {children}

@@ -1,36 +1,37 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Token della direzione visiva "Campo".
+   Token dei temi. «Grafite rame» e' il default; «Campo verde»
+   e' il tema storico, invariato, selezionabile dal Setup.
    I quattro colori di stato (gold, ok, amber, danger) portano
    significato: non vanno usati come decorazione.
    ============================================================ */
 @theme {
-  --color-pitch: #0b3d2e;
-  --color-pitch-mid: #134c36;
-  --color-pitch-deep: #08281e;
-  --color-panel: rgba(0, 0, 0, 0.22);
-  --color-panel-input: rgba(0, 0, 0, 0.3);
-  --color-panel-input-strong: rgba(0, 0, 0, 0.45);
-  --color-line: #1d5843;
-  --color-line-soft: rgba(244, 240, 230, 0.09);
-  --color-chalk: #f4f0e6;
-  --color-dim: #9fb3a9;
-  --color-gold: #d4af37;
-  --color-ok: #4e9c6e;
-  --color-amber: #d8963c;
-  --color-danger: #c24b3f;
-  --color-ink: #0a1f17;
+  --color-pitch: #2a2a2a;
+  --color-pitch-mid: #303030;
+  --color-pitch-deep: #262626;
+  --color-panel: transparent;
+  --color-panel-input: #333333;
+  --color-panel-input-strong: #333333;
+  --color-line: #3d3d3d;
+  --color-line-soft: rgba(255, 255, 255, 0.07);
+  --color-chalk: #ededed;
+  --color-dim: #8f8f8f;
+  --color-gold: #e08b4f;
+  --color-ok: #7d9c85;
+  --color-amber: #c69a55;
+  --color-danger: #c2564b;
+  --color-ink: #1c1a18;
 
-  --color-ruolo-p: #e0a94a;
-  --color-ruolo-d: #5b8cc7;
-  --color-ruolo-c: #6fbf7a;
-  --color-ruolo-a: #d46a6a;
+  --color-ruolo-p: #b39a6d;
+  --color-ruolo-d: #8296b3;
+  --color-ruolo-c: #7fa587;
+  --color-ruolo-a: #b58585;
 
-  --color-fascia-top: #d4af37;
-  --color-fascia-semi: #aeb4bc;
-  --color-fascia-terza: #8fb4a6;
-  --color-fascia-scommessa: #b5651d;
+  --color-fascia-top: #e08b4f;
+  --color-fascia-semi: #9c9c9c;
+  --color-fascia-terza: #8f9691;
+  --color-fascia-scommessa: #a3764a;
 
   --font-ui: "Archivo", system-ui, sans-serif;
   --font-cond: "Barlow Condensed", "Archivo", sans-serif;
@@ -38,6 +39,48 @@
 }
 
 @layer base {
+  /* Raggi e testata: condivisi dalle primitive, cambiano per tema. */
+  :root,
+  [data-tema="grafite"] {
+    --raggio-pannello: 0px;
+    --raggio-controllo: 0px;
+    --raggio-mini: 0px;
+    --raggio-focus: 0px;
+  }
+
+  [data-tema="campo"] {
+    --color-pitch: #0b3d2e;
+    --color-pitch-mid: #134c36;
+    --color-pitch-deep: #08281e;
+    --color-panel: rgba(0, 0, 0, 0.22);
+    --color-panel-input: rgba(0, 0, 0, 0.3);
+    --color-panel-input-strong: rgba(0, 0, 0, 0.45);
+    --color-line: #1d5843;
+    --color-line-soft: rgba(244, 240, 230, 0.09);
+    --color-chalk: #f4f0e6;
+    --color-dim: #9fb3a9;
+    --color-gold: #d4af37;
+    --color-ok: #4e9c6e;
+    --color-amber: #d8963c;
+    --color-danger: #c24b3f;
+    --color-ink: #0a1f17;
+
+    --color-ruolo-p: #e0a94a;
+    --color-ruolo-d: #5b8cc7;
+    --color-ruolo-c: #6fbf7a;
+    --color-ruolo-a: #d46a6a;
+
+    --color-fascia-top: #d4af37;
+    --color-fascia-semi: #aeb4bc;
+    --color-fascia-terza: #8fb4a6;
+    --color-fascia-scommessa: #b5651d;
+
+    --raggio-pannello: 11px;
+    --raggio-controllo: 8px;
+    --raggio-mini: 5px;
+    --raggio-focus: 4px;
+  }
+
   * {
     box-sizing: border-box;
   }
@@ -67,7 +110,7 @@
   :focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px var(--color-gold);
-    border-radius: 4px;
+    border-radius: var(--raggio-focus);
   }
 
   input,

@@ -8,8 +8,102 @@ import { NUMERO_CALCIATORI_SEED } from '../data/listone-seed';
 import { budgetPerRuolo } from '../domain/budget';
 import { useStore } from '../store/store';
 import { useStatoBudget } from '../store/derivati';
+import { useUI, type Tema } from '../store/ui';
 import { dataPerNomeFile, scarica } from '../lib/file';
 import { Campo, Nota, Numero, Pannello, Pulsante } from '../ui/primitive';
+
+/* Colori letterali (non token): la vetrina del tema deve mostrare l'aspetto
+   di ENTRAMBI i temi, non solo di quello attivo. */
+const TEMI: Array<{
+  id: Tema;
+  nome: string;
+  nota: string;
+  bg: string;
+  accento: string;
+  ok: string;
+  danger: string;
+}> = [
+  {
+    id: 'grafite',
+    nome: 'Grafite rame',
+    nota: 'Grigio neutro, un solo accento rame. Tabelle a filetti, nessun riquadro.',
+    bg: '#2A2A2A',
+    accento: '#E08B4F',
+    ok: '#7D9C85',
+    danger: '#C2564B',
+  },
+  {
+    id: 'campo',
+    nome: 'Campo verde',
+    nota: 'Il tema originale: verde da campo, testo gesso, oro per obiettivi e max offerta.',
+    bg: '#0B3D2E',
+    accento: '#D4AF37',
+    ok: '#4E9C6E',
+    danger: '#C24B3F',
+  },
+];
+
+function PannelloTema() {
+  const tema = useUI((s) => s.tema);
+  const setTema = useUI((s) => s.setTema);
+
+  return (
+    <Pannello titolo="Tema">
+      <div className="flex flex-col gap-[8px]">
+        {TEMI.map((t) => {
+          const selezionato = t.id === tema;
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTema(t.id)}
+              className="flex items-center gap-[11px] rounded-[var(--raggio-controllo)] text-left"
+              style={{
+                padding: '9px 10px',
+                background: selezionato
+                  ? 'color-mix(in srgb, var(--color-gold) 10%, transparent)'
+                  : 'transparent',
+                border: `1px solid ${selezionato ? 'var(--color-gold)' : 'var(--color-line)'}`,
+              }}
+            >
+              <span
+                className="flex shrink-0 overflow-hidden rounded-[2px]"
+                style={{ border: '1px solid rgba(0,0,0,.35)' }}
+              >
+                <span style={{ display: 'block', width: 16, height: 26, background: t.bg }} />
+                <span style={{ display: 'block', width: 9, height: 26, background: t.accento }} />
+                <span style={{ display: 'block', width: 9, height: 26, background: t.ok }} />
+                <span style={{ display: 'block', width: 9, height: 26, background: t.danger }} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span
+                  className="block text-[12px] font-bold"
+                  style={{ color: selezionato ? 'var(--color-gold)' : 'var(--color-chalk)' }}
+                >
+                  {t.nome}
+                </span>
+                <span className="mt-[1px] block text-[10px] leading-[1.4] text-dim">{t.nota}</span>
+              </span>
+              <span
+                className="shrink-0 rounded-full"
+                style={{
+                  width: 14,
+                  height: 14,
+                  border: `1px solid ${selezionato ? 'var(--color-gold)' : 'var(--color-line)'}`,
+                  background: selezionato ? 'var(--color-gold)' : 'transparent',
+                }}
+              />
+            </button>
+          );
+        })}
+      </div>
+      <Nota>
+        La scelta vale per tutta l'app e viene salvata con le altre preferenze. I quattro colori di
+        stato — tuo, perso, attenzione, obiettivo — restano distinguibili in entrambi i temi.
+      </Nota>
+    </Pannello>
+  );
+}
 
 export function Setup() {
   const config = useStore((s) => s.config);
@@ -114,6 +208,8 @@ export function Setup() {
       </Pannello>
 
       <aside className="flex flex-col gap-[12px]">
+        <PannelloTema />
+
         <Pannello titolo="Link esterni">
           <label className="flex flex-col gap-[5px]">
             <span className="text-[12px] text-dim">Probabili formazioni</span>

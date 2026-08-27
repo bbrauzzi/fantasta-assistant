@@ -18,17 +18,17 @@ export const RUOLO_SINGOLARE: Record<Ruolo, string> = {
 };
 
 export const RUOLO_COLORE: Record<Ruolo, string> = {
-  P: '#E0A94A',
-  D: '#5B8CC7',
-  C: '#6FBF7A',
-  A: '#D46A6A',
+  P: 'var(--color-ruolo-p)',
+  D: 'var(--color-ruolo-d)',
+  C: 'var(--color-ruolo-c)',
+  A: 'var(--color-ruolo-a)',
 };
 
 export const FASCIA_COLORE: Record<Fascia, string> = {
-  Top: '#D4AF37',
-  'Semi-top': '#AEB4BC',
-  'Terza fascia': '#8FB4A6',
-  Scommessa: '#B5651D',
+  Top: 'var(--color-fascia-top)',
+  'Semi-top': 'var(--color-fascia-semi)',
+  'Terza fascia': 'var(--color-fascia-terza)',
+  Scommessa: 'var(--color-fascia-scommessa)',
 };
 
 /** Ordinamento delle fasce: 0 = migliore. */
@@ -56,16 +56,16 @@ export const CONFIG_DEFAULT: ConfigLega = {
 };
 
 export const PALETTE = {
-  pitch: '#0B3D2E',
-  pitchMid: '#134C36',
-  pitchDeep: '#08281E',
-  line: '#1D5843',
-  lineSoft: 'rgba(244,240,230,.09)',
-  chalk: '#F4F0E6',
-  dim: '#9FB3A9',
-  gold: '#D4AF37',
-  ok: '#4E9C6E',
-  amber: '#D8963C',
-  danger: '#C24B3F',
-  ink: '#0A1F17',
+  pitch: 'var(--color-pitch)',
+  pitchMid: 'var(--color-pitch-mid)',
+  pitchDeep: 'var(--color-pitch-deep)',
+  line: 'var(--color-line)',
+  lineSoft: 'var(--color-line-soft)',
+  chalk: 'var(--color-chalk)',
+  dim: 'var(--color-dim)',
+  gold: 'var(--color-gold)',
+  ok: 'var(--color-ok)',
+  amber: 'var(--color-amber)',
+  danger: 'var(--color-danger)',
+  ink: 'var(--color-ink)',
 } as const;

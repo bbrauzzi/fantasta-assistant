@@ -2,10 +2,11 @@
    I due numeri piu' grandi della pagina sono crediti residui e max offerta. */
 
 import { AlertTriangle, Keyboard, Zap } from 'lucide-react';
-import { RUOLI } from '../domain/costanti';
+import { RUOLI, RUOLO_COLORE } from '../domain/costanti';
 import { spiegaMaxOfferta } from '../domain/budget';
 import { etichettaFreschezza, giorniDaAggiornamento } from '../domain/listone';
 import { useStore } from '../store/store';
+import { useUI } from '../store/ui';
 import { useAnalisiRosa, useStatoBudget } from '../store/derivati';
 import { BarraAvanzamento, Numero, Pulsante } from '../ui/primitive';
 
@@ -16,6 +17,7 @@ export function BarraStato({
   onAstaRapida: () => void;
   onAiuto: () => void;
 }) {
+  const tema = useUI((s) => s.tema);
   const config = useStore((s) => s.config);
   const ultimoSalvataggio = useStore((s) => s.ultimoSalvataggio);
   const ultimoAggiornamento = useStore((s) => s.ultimoAggiornamentoListone);
@@ -24,6 +26,173 @@ export function BarraStato({
 
   const freschezza = etichettaFreschezza(giorniDaAggiornamento(ultimoAggiornamento));
   const residuiNegativi = st.residui < 0;
+  const testoSalvataggio = ultimoSalvataggio
+    ? `salvato ${new Date(ultimoSalvataggio).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}`
+    : 'salvataggio automatico';
+  const titoloSegnalazioni = analisi.segnalazioni
+    .filter((s) => s.livello === 'attenzione')
+    .map((s) => s.testo)
+    .join(' · ');
+
+  if (tema === 'grafite') {
+    return (
+      <header
+        className="sticky top-0 z-30 flex items-stretch gap-0"
+        style={{ borderBottom: '1px solid var(--color-line)', background: 'var(--color-pitch-mid)' }}
+      >
+        <div
+          className="flex items-center gap-[9px] px-[18px] font-bold uppercase"
+          style={{ fontFamily: 'var(--font-cond)', fontSize: 21, letterSpacing: '.08em' }}
+        >
+          <span style={{ width: 3, height: 18, background: 'var(--color-gold)', display: 'block' }} />
+          FantAsta
+        </div>
+
+        <div
+          className="flex items-baseline gap-[12px] px-[20px] py-[12px]"
+          style={{ borderLeft: '1px solid var(--color-line)' }}
+        >
+          <div>
+            <div className="whitespace-nowrap uppercase" style={{ fontSize: 9, letterSpacing: '.16em', color: '#A8A8A8' }}>
+              Crediti residui
+            </div>
+            <div className="mt-[2px] flex items-baseline gap-[6px]">
+              <Numero
+                valore={st.residui}
+                dimensione={34}
+                peso={500}
+                colore={residuiNegativi ? 'var(--color-danger)' : undefined}
+              />
+              <span className="n" style={{ fontSize: 12, color: '#A8A8A8' }}>
+                /{config.budgetTotale}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="flex items-baseline px-[20px] py-[12px]"
+          style={{
+            borderLeft: '1px solid var(--color-line)',
+            background: 'color-mix(in srgb, var(--color-gold) 5%, transparent)',
+          }}
+          title={spiegaMaxOfferta(st)}
+        >
+          <div>
+            <div
+              className="whitespace-nowrap uppercase"
+              style={{ fontSize: 9, letterSpacing: '.16em', color: 'var(--color-gold)' }}
+            >
+              Max offerta ora
+            </div>
+            <div className="mt-[2px] flex items-baseline gap-[8px]">
+              <Numero valore={st.maxOfferta} dimensione={34} peso={600} colore="var(--color-gold)" />
+              <span className="whitespace-nowrap" style={{ fontSize: 10, color: '#A8A8A8' }}>
+                {st.slotDaRiempire} slot
+                <br />
+                da riempire
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="flex items-center gap-[20px] px-[20px] py-[12px]"
+          style={{ borderLeft: '1px solid var(--color-line)' }}
+        >
+          {RUOLI.map((r) => {
+            const sforato = st.residuoPerRuolo[r] < 0;
+            const perc =
+              st.budgetPerRuolo[r] > 0 ? (st.spesoPerRuolo[r] / st.budgetPerRuolo[r]) * 100 : 0;
+            const colore = sforato ? 'var(--color-danger)' : RUOLO_COLORE[r];
+            return (
+              <div key={r} style={{ minWidth: 66 }}>
+                <div className="flex items-baseline justify-between gap-[8px]">
+                  <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '.06em', color: colore }}>
+                    {r}
+                  </span>
+                  <span className="n" style={{ fontSize: 9, color: '#A8A8A8' }}>
+                    {st.presiPerRuolo[r]}/{config.slotPerRuolo[r]}
+                  </span>
+                </div>
+                <div className="mt-[1px] flex items-baseline gap-[4px]">
+                  <Numero valore={st.residuoPerRuolo[r]} dimensione={15} peso={500} colore={sforato ? 'var(--color-danger)' : undefined} />
+                </div>
+                <div className="mt-[5px]" style={{ height: 2, background: 'var(--color-line)' }}>
+                  <div
+                    style={{ height: 2, background: colore, width: `${Math.max(0, Math.min(100, perc))}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div
+          className="ml-auto flex min-w-0 items-center gap-[14px] px-[18px]"
+          style={{ borderLeft: '1px solid var(--color-line)' }}
+        >
+          {analisi.quanteAttenzioni > 0 && (
+            <span
+              className="flex items-center gap-[5px] whitespace-nowrap font-semibold"
+              style={{ fontSize: 11, color: 'var(--color-amber)' }}
+              title={titoloSegnalazioni}
+            >
+              <AlertTriangle size={12} />
+              {analisi.quanteAttenzioni} segnalazion{analisi.quanteAttenzioni === 1 ? 'e' : 'i'}
+            </span>
+          )}
+          <span
+            className="flex min-w-0 flex-col items-end whitespace-nowrap"
+            style={{ fontSize: 10, lineHeight: 1.4 }}
+          >
+            <span
+              className="truncate"
+              style={{ color: freschezza.marcato ? 'var(--color-amber)' : '#8F8F8F' }}
+              title="Il listone va riscaricato dal sito e riapplicato con «Aggiorna listone»"
+            >
+              {freschezza.testo}
+            </span>
+            <span className="truncate" style={{ color: '#8F8F8F' }} title="Il salvataggio è automatico a ogni modifica">
+              {testoSalvataggio}
+            </span>
+          </span>
+          <button
+            type="button"
+            onClick={onAstaRapida}
+            className="flex items-center gap-[6px] whitespace-nowrap font-semibold"
+            style={{
+              padding: '8px 13px',
+              fontSize: 12,
+              background: 'var(--color-gold)',
+              color: 'var(--color-ink)',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            <Zap size={13} /> Asta rapida
+            <span className="n" style={{ fontSize: 10, opacity: 0.6 }}>
+              F
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={onAiuto}
+            title="Mappa delle scorciatoie (?)"
+            style={{
+              padding: '8px 10px',
+              border: '1px solid var(--color-line)',
+              color: '#A8A8A8',
+              background: 'transparent',
+              cursor: 'pointer',
+            }}
+          >
+            <Keyboard size={13} />
+          </button>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header
