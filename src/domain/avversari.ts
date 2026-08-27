@@ -5,7 +5,7 @@
    ============================================================ */
 
 import type { Avversario, Calciatore, ConfigLega, Ruolo } from '../types';
-import { RUOLI, RUOLO_LABEL } from './costanti';
+import { NOMI_AVVERSARI_DEFAULT, RUOLI, RUOLO_LABEL } from './costanti';
 import { calcolaMaxOfferta } from './budget';
 
 export interface AvversarioCalcolato {
@@ -136,7 +136,10 @@ export function generaAvversari(cfg: ConfigLega, esistenti: Avversario[] = []): 
         ? { ...vecchio, budgetIniziale: cfg.budgetTotale }
         : {
             id: `avv-${i + 1}`,
-            nome: `Squadra ${i + 1}`,
+            nome:
+              i < NOMI_AVVERSARI_DEFAULT.length
+                ? NOMI_AVVERSARI_DEFAULT[i]
+                : `Squadra ${i + 1}`,
             budgetIniziale: cfg.budgetTotale,
             speseManuali: 0,
             slotManuali: 0,

@@ -577,7 +577,7 @@ export const useStore = create<StoreFantasta>()(
     },
     {
       name: 'fantasta-assistant',
-      version: 3,
+      version: 5,
       /* Chi aveva gia' aperto l'app prima dei campi su rigori e punizioni ha
          in localStorage calciatori senza quei campi: senza migrazione la UI
          leggerebbe undefined. Non provo a indovinare chi tira: metto false e
@@ -588,6 +588,34 @@ export const useStore = create<StoreFantasta>()(
       migrate: (salvato, versione) => {
         const s = salvato as StatoPersistito;
         if (s?.config) s.config = { ...CONFIG_DEFAULT, ...s.config };
+        /* La v4 da' un nome alla lega e alla mia squadra e sposta i default a
+           300 crediti / 10 partecipanti. Chi aveva ancora i vecchi default (500 e
+           8, mai toccati) viene portato ai nuovi; chi li aveva gia' cambiati
+           tiene i suoi, perche' li' c'e' una scelta vera da rispettare. */
+        if (versione < 4 && s?.config) {
+          const suiVecchiDefault = s.config.budgetTotale === 500 && s.config.numPartecipanti === 8;
+          if (suiVecchiDefault) {
+            s.config.budgetTotale = CONFIG_DEFAULT.budgetTotale;
+            s.config.numPartecipanti = CONFIG_DEFAULT.numPartecipanti;
+            /* Gli avversari generici e a zero spese non contengono lavoro mio:
+               li rifaccio coi nomi veri. Se ne ho rinominato o tracciato anche
+               uno solo, li conservo e mi limito ad allungare l'elenco. */
+            const intatti = (s.avversari ?? []).every(
+              (a) => /^Squadra \d+$/.test(a.nome) && a.speseManuali === 0 && a.slotManuali === 0,
+            );
+            s.avversari = generaAvversari(s.config, intatti ? [] : s.avversari);
+          }
+        }
+        /* La v5 corregge un nome sbagliato in fase di inserimento: la squadra
+           dell'elenco e' "Venezezia", non "Venezia". Rinomino solo se e' ancora
+           quella generata da me e intatta, per non sovrascrivere una scelta. */
+        if (versione < 5 && s?.avversari) {
+          s.avversari = s.avversari.map((a) =>
+            a.nome === 'Venezia' && a.speseManuali === 0 && a.slotManuali === 0
+              ? { ...a, nome: 'Venezezia' }
+              : a,
+          );
+        }
         if (versione < 2 && s?.calciatori) {
           s.calciatori = s.calciatori.map((c) => ({
             ...c,
@@ -607,6 +635,8 @@ export const useStore = create<StoreFantasta>()(
 
 function descriviPatch(patch: Partial<ConfigLega>): string {
   const parti: string[] = [];
+  if (patch.nomeLega !== undefined) parti.push(`lega "${patch.nomeLega}"`);
+  if (patch.nomeMiaSquadra !== undefined) parti.push(`squadra "${patch.nomeMiaSquadra}"`);
   if (patch.budgetTotale !== undefined) parti.push(`budget ${patch.budgetTotale}`);
   if (patch.numPartecipanti !== undefined) parti.push(`${patch.numPartecipanti} partecipanti`);
   if (patch.prezzoMinimoSlot !== undefined) parti.push(`prezzo minimo ${patch.prezzoMinimoSlot}`);

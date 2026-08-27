@@ -30,6 +30,10 @@ export function calc(p: Partial<Calciatore> & { ruolo: Ruolo }): Calciatore {
   };
 }
 
+/* I test della matematica di lega sono scritti sul listino ufficiale, che e'
+   tarato su 500 crediti e 8 partecipanti. Restano ancorati qui invece di
+   seguire CONFIG_DEFAULT: i default sono la configurazione della MIA lega e
+   possono cambiare, la taratura del listino no. */
 export function cfg(p: Partial<ConfigLega> = {}): ConfigLega {
-  return { ...CONFIG_DEFAULT, ...p };
+  return { ...CONFIG_DEFAULT, budgetTotale: 500, numPartecipanti: 8, ...p };
 }

@@ -141,6 +141,16 @@ export function Setup() {
     <div className="grid gap-[16px] px-[18px] py-[16px]" style={{ gridTemplateColumns: '1fr 1fr 330px' }}>
       <Pannello titolo="Parametri della lega">
         <div className="flex flex-col gap-[10px]">
+          <CampoTesto
+            etichetta="Nome della lega"
+            valore={config.nomeLega}
+            onCambia={(v) => aggiornaConfig({ nomeLega: v })}
+          />
+          <CampoTesto
+            etichetta="La mia squadra"
+            valore={config.nomeMiaSquadra}
+            onCambia={(v) => aggiornaConfig({ nomeMiaSquadra: v })}
+          />
           <CampoNumerico
             etichetta="Budget totale"
             valore={config.budgetTotale}
@@ -335,6 +345,27 @@ export function Setup() {
         </Pannello>
       </aside>
     </div>
+  );
+}
+
+function CampoTesto({
+  etichetta,
+  valore,
+  onCambia,
+}: {
+  etichetta: string;
+  valore: string;
+  onCambia: (v: string) => void;
+}) {
+  return (
+    <label className="flex items-center justify-between gap-[10px]">
+      <span className="shrink-0 text-[12px] text-dim">{etichetta}</span>
+      <Campo
+        className="min-w-0 flex-1 text-right"
+        value={valore}
+        onChange={(e) => onCambia(e.target.value)}
+      />
+    </label>
   );
 }
 
