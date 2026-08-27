@@ -12,10 +12,11 @@ import {
   calcolaDiff,
   chiaveDifferenza,
   fileSembraParziale,
-  haIntestazioni,
   interpretaRighe,
+  mappaturaCompleta,
   proponiMappatura,
   totaleDifferenze,
+  trovaRigaIntestazioni,
 } from '../domain/listone';
 import { useStore } from '../store/store';
 import { leggiFile } from '../lib/file';
@@ -39,6 +40,7 @@ export function ImportListone({ onChiudi }: { onChiudi: () => void }) {
   const [caricando, setCaricando] = useState(false);
   const [escluse, setEscluse] = useState<Set<string>>(new Set());
   const [includiNuovi, setIncludiNuovi] = useState(true);
+  const [mappaturaAutomatica, setMappaturaAutomatica] = useState(false);
 
   const intestazioni = useMemo(() => {
     if (righe.length === 0) return [];
@@ -73,12 +75,28 @@ export function ImportListone({ onChiudi }: { onChiudi: () => void }) {
     try {
       const letto = await leggiFile(file);
       if (letto.righe.length === 0) throw new Error('il file è vuoto');
-      const conTeste = haIntestazioni(letto.righe);
+      // Alcuni export (fantacalcio.it in testa) mettono una riga di titolo
+      // sopra le intestazioni vere: si cercano nelle prime righe, non solo
+      // nella prima, e si scarta tutto quello che le precede.
+      const idxIntestazioni = trovaRigaIntestazioni(letto.righe);
+      const conTeste = idxIntestazioni >= 0;
+      const righeUtili = conTeste ? letto.righe.slice(idxIntestazioni) : letto.righe;
+      const proposta = proponiMappatura(
+        conTeste ? righeUtili[0].celle : righeUtili[0].celle.map(() => ''),
+      );
       setNomeFile(letto.nomeFile);
-      setRighe(letto.righe);
+      setRighe(righeUtili);
       setConIntestazioni(conTeste);
-      setMappa(proponiMappatura(conTeste ? letto.righe[0].celle : letto.righe[0].celle.map(() => '')));
-      setPasso('mappatura');
+      setMappa(proposta);
+      // Il tracciato del sito e' sempre lo stesso: se le intestazioni bastano
+      // a riconoscere tutti i campi obbligatori, si salta dritti al referto.
+      if (conTeste && mappaturaCompleta(proposta)) {
+        setMappaturaAutomatica(true);
+        setPasso('referto');
+      } else {
+        setMappaturaAutomatica(false);
+        setPasso('mappatura');
+      }
     } catch (e) {
       setErrore(`Non riesco a leggere il file: ${(e as Error).message}`);
     } finally {
@@ -86,9 +104,7 @@ export function ImportListone({ onChiudi }: { onChiudi: () => void }) {
     }
   };
 
-  const mappaturaCompleta = CAMPI_IMPORT.filter((c) => CAMPO_OBBLIGATORIO[c]).every(
-    (c) => mappa[c] !== null && mappa[c] !== undefined,
-  );
+  const mappaturaOk = mappaturaCompleta(mappa);
 
   const applica = () => {
     if (!referto) return;
@@ -125,8 +141,11 @@ export function ImportListone({ onChiudi }: { onChiudi: () => void }) {
             </Pulsante>
             <Pulsante
               variante="oro"
-              disabled={!mappaturaCompleta}
-              onClick={() => setPasso('referto')}
+              disabled={!mappaturaOk}
+              onClick={() => {
+                setMappaturaAutomatica(false);
+                setPasso('referto');
+              }}
               className="flex items-center gap-[6px]"
             >
               Vedi il referto <ArrowRight size={13} />
@@ -134,7 +153,13 @@ export function ImportListone({ onChiudi }: { onChiudi: () => void }) {
           </>
         ) : passo === 'referto' ? (
           <>
-            <Pulsante variante="dim" onClick={() => setPasso('mappatura')}>
+            <Pulsante
+              variante="dim"
+              onClick={() => {
+                setMappaturaAutomatica(false);
+                setPasso('mappatura');
+              }}
+            >
               Indietro
             </Pulsante>
             <Pulsante variante="oro" onClick={applica} disabled={!referto}>
@@ -156,7 +181,7 @@ export function ImportListone({ onChiudi }: { onChiudi: () => void }) {
           setMappa={setMappa}
           conIntestazioni={conIntestazioni}
           setConIntestazioni={setConIntestazioni}
-          completa={mappaturaCompleta}
+          completa={mappaturaOk}
         />
       )}
 
@@ -169,6 +194,7 @@ export function ImportListone({ onChiudi }: { onChiudi: () => void }) {
           setEscluse={setEscluse}
           includiNuovi={includiNuovi}
           setIncludiNuovi={setIncludiNuovi}
+          mappaturaAutomatica={mappaturaAutomatica}
         />
       )}
     </Modale>
@@ -349,6 +375,7 @@ function PassoReferto({
   setEscluse,
   includiNuovi,
   setIncludiNuovi,
+  mappaturaAutomatica,
 }: {
   referto: RefertoDiff;
   parziale: boolean;
@@ -357,6 +384,7 @@ function PassoReferto({
   setEscluse: (s: Set<string>) => void;
   includiNuovi: boolean;
   setIncludiNuovi: (v: boolean) => void;
+  mappaturaAutomatica: boolean;
 }) {
   const alterna = (k: string) => {
     const n = new Set(escluse);
@@ -369,6 +397,13 @@ function PassoReferto({
 
   return (
     <>
+      {mappaturaAutomatica && (
+        <Nota>
+          Colonne riconosciute automaticamente dalle intestazioni del file. Se qualcosa non
+          torna, torna indietro per controllare o correggere la mappatura.
+        </Nota>
+      )}
+
       <div className="mb-[14px] flex flex-wrap gap-[16px] text-[12px]">
         <Contatore etichetta="righe lette" valore={referto.righeLette} />
         <Contatore etichetta="trasferimenti" valore={referto.trasferimenti.length} colore="var(--color-gold)" />
