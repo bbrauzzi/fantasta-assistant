@@ -71,6 +71,12 @@ export const ETICHETTA_CAMPO: Record<CampoImport, string> = {
   probTitolare: '% titolarità',
 };
 
+export function mappaturaCompleta(mappa: MappaturaColonne): boolean {
+  return CAMPI_IMPORT.filter((c) => CAMPO_OBBLIGATORIO[c]).every(
+    (c) => mappa[c] !== null && mappa[c] !== undefined,
+  );
+}
+
 export function proponiMappatura(intestazioni: string[]): MappaturaColonne {
   const teste = intestazioni.map((h) => normalizza(h).replace(/[^a-z0-9.]/g, ''));
   const mappa: MappaturaColonne = {};
@@ -103,6 +109,20 @@ export function haIntestazioni(righe: RigaGrezza[]): boolean {
     const n = normalizza(c).replace(/[^a-z0-9.]/g, '');
     return n.length > 0 && tutti.includes(n);
   });
+}
+
+/**
+ * Il file di fantacalcio.it ha una riga di titolo ("Quotazioni Fantacalcio
+ * Stagione ...") sopra le intestazioni vere: cerca la riga di intestazioni
+ * tra le prime `maxRighe` del file, non solo alla prima. Restituisce l'indice
+ * trovato, o -1 se nella finestra di ricerca non c'e' nulla che somigli a
+ * un'intestazione (probabilmente il file non ne ha).
+ */
+export function trovaRigaIntestazioni(righe: RigaGrezza[], maxRighe = 3): number {
+  for (let i = 0; i < Math.min(maxRighe, righe.length); i++) {
+    if (haIntestazioni([righe[i]])) return i;
+  }
+  return -1;
 }
 
 /* ---------------------------- interpretazione ---------------------------- */

@@ -13,7 +13,9 @@ import {
   leggiFascia,
   leggiNumero,
   leggiRuolo,
+  mappaturaCompleta,
   proponiMappatura,
+  trovaRigaIntestazioni,
 } from './listone';
 import { calc } from './aiuti-test';
 import type { RigaGrezza } from '../types';
@@ -82,6 +84,26 @@ describe('mappatura delle colonne', () => {
     expect(haIntestazioni([riga(1, 'Nome', 'Squadra', 'Ruolo', 'Qt.A')])).toBe(true);
     expect(haIntestazioni([riga(1, 'Lautaro', 'Inter', 'A', '45')])).toBe(false);
     expect(haIntestazioni([])).toBe(false);
+  });
+
+  it('e completa solo quando i campi obbligatori sono tutti mappati', () => {
+    const m = proponiMappatura(['Id', 'R', 'Nome', 'Squadra', 'Qt.A', 'FVM']);
+    expect(mappaturaCompleta(m)).toBe(true);
+
+    const incompleta = proponiMappatura(['Nome', 'Squadra', 'Qt.A']); // manca il ruolo
+    expect(mappaturaCompleta(incompleta)).toBe(false);
+  });
+
+  it('trova le intestazioni anche sotto una riga di titolo, come nel file di fantacalcio.it', () => {
+    const righeConTitolo = [
+      riga(1, 'Quotazioni Fantacalcio Stagione 2026-27'),
+      riga(2, 'Id', 'R', 'RM', 'Nome', 'Squadra', 'Qt.A'),
+      riga(3, '5841', 'P', 'Por', 'Svilar', 'Roma', '18'),
+    ];
+    expect(trovaRigaIntestazioni(righeConTitolo)).toBe(1);
+
+    expect(trovaRigaIntestazioni([riga(1, 'Nome', 'Squadra', 'Ruolo', 'Qt.A')])).toBe(0);
+    expect(trovaRigaIntestazioni([riga(1, 'Lautaro', 'Inter', 'A', '45')])).toBe(-1);
   });
 });
 
