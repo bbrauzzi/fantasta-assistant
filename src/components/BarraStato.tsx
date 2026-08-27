@@ -40,12 +40,22 @@ export function BarraStato({
         className="sticky top-0 z-30 flex items-stretch gap-0"
         style={{ borderBottom: '1px solid var(--color-line)', background: 'var(--color-pitch-mid)' }}
       >
-        <div
-          className="flex items-center gap-[9px] px-[18px] font-bold uppercase"
-          style={{ fontFamily: 'var(--font-cond)', fontSize: 21, letterSpacing: '.08em' }}
-        >
+        <div className="flex items-center gap-[9px] px-[18px]">
           <span style={{ width: 3, height: 18, background: 'var(--color-gold)', display: 'block' }} />
-          FantAsta
+          <span className="min-w-0">
+            <span
+              className="block font-bold uppercase"
+              style={{ fontFamily: 'var(--font-cond)', fontSize: 21, letterSpacing: '.08em' }}
+            >
+              {config.nomeMiaSquadra}
+            </span>
+            <span
+              className="block truncate uppercase"
+              style={{ fontSize: 9, letterSpacing: '.16em', color: '#A8A8A8' }}
+            >
+              {config.nomeLega}
+            </span>
+          </span>
         </div>
 
         <div
@@ -199,11 +209,19 @@ export function BarraStato({
       className="sticky top-0 z-30 flex items-center gap-[14px] border-b-2 border-line px-[14px] py-[12px]"
       style={{ background: 'linear-gradient(180deg,#134C36,#0B3D2E)' }}
     >
-      <div
-        className="font-bold uppercase"
-        style={{ fontFamily: 'var(--font-cond)', fontSize: 22, letterSpacing: '.06em' }}
-      >
-        FantAsta
+      <div className="min-w-0">
+        <div
+          className="font-bold uppercase"
+          style={{ fontFamily: 'var(--font-cond)', fontSize: 22, letterSpacing: '.06em' }}
+        >
+          {config.nomeMiaSquadra}
+        </div>
+        <div
+          className="truncate uppercase opacity-70"
+          style={{ fontSize: 9, letterSpacing: '.16em' }}
+        >
+          {config.nomeLega}
+        </div>
       </div>
 
       <div className="flex gap-[10px]">

@@ -69,8 +69,12 @@ export interface Avversario {
 }
 
 export interface ConfigLega {
-  budgetTotale: number; // default 500
-  numPartecipanti: number; // default 8
+  /** Come si chiama la lega. Compare in testata e nel nome dei backup. */
+  nomeLega: string;
+  /** La mia squadra: non e' un avversario, e' quella di cui vedo la rosa. */
+  nomeMiaSquadra: string;
+  budgetTotale: number; // default 300
+  numPartecipanti: number; // default 10
   slotPerRuolo: Record<Ruolo, number>; // default { P:3, D:8, C:8, A:6 }
   percBudgetPerRuolo: Record<Ruolo, number>; // default { P:5, D:15, C:30, A:50 }
   prezzoMinimoSlot: number; // default 1 - quanto costa come minimo riempire uno slot

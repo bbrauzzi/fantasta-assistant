@@ -42,9 +42,26 @@ export const RANGO_FASCIA: Record<Fascia, number> = {
 /** Sotto questa soglia di titolarita' una casella e' "debole" e va marcata. */
 export const SOGLIA_TITOLARITA_DEBOLE = 55;
 
+/* Le nove avversarie della Zattera, nell'ordine dell'elenco di lega.
+   La mia non e' in questa lista: sta in CONFIG_DEFAULT.nomeMiaSquadra,
+   perche' generaAvversari crea numPartecipanti - 1 squadre. */
+export const NOMI_AVVERSARI_DEFAULT: readonly string[] = [
+  'Real Maestro',
+  'Cotto e Rosa',
+  'CSK La Rissa',
+  'Citemmuerte',
+  'AC Ciughina',
+  'Sestola Bonkers',
+  'Venezezia',
+  'Atletico Bagnetti',
+  'Muppet',
+];
+
 export const CONFIG_DEFAULT: ConfigLega = {
-  budgetTotale: 500,
-  numPartecipanti: 8,
+  nomeLega: 'Lega La Zattera',
+  nomeMiaSquadra: 'Atletico Blascao',
+  budgetTotale: 300,
+  numPartecipanti: 10,
   slotPerRuolo: { P: 3, D: 8, C: 8, A: 6 },
   percBudgetPerRuolo: { P: 5, D: 15, C: 30, A: 50 },
   prezzoMinimoSlot: 1,
