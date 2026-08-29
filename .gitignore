@@ -6,3 +6,6 @@ dist-ssr/
 .vite/
 coverage/
 *.tsbuildinfo
+
+# Skill locale, non versionata
+.claude/skills/run-app/
